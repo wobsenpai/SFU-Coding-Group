@@ -44,27 +44,28 @@ dice_face = {
 }
 
 points = {1: 100, 2: 2, 3: 3, 4: 4, 5: 5, 6: 60}
+#question about special scores
 special_scores = {
-    (6, 6, 6): 1000,
-    (4, 5, 6): 900,
+    (4, 5, 6): 1000,
+    (6, 6, 6): 900,
     (5, 5, 5): 800,
     (4, 4, 4): 700,
     (3, 3, 3): 600,
     (2, 2, 2): 500,
     (1, 1, 1): 400,
-    (1, 2, 4): 300
+    (1, 2, 3): 300
 }
 
 score = 0
+#risk is token to give
 risk = 0
 def roll_dice():
     global score, risk
     score, risk = 0
 
-    rolls = [random.randint(1, 6) for _ in range(3)]
-
+    rolls = [random.randint(1, 6) for j in range(3)]
     for row in range(5):
-        print("  ".join(dice_face[dice][row] for dice in rolls))
+        print("  ".join(dice_face[i][row] for i in rolls))
 
     sorted_rolls = tuple(sorted(rolls))
     if sorted_rolls in special_scores:
