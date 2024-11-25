@@ -56,8 +56,11 @@ special_scores = {
 }
 
 score = 0
+risk = 0
 def roll_dice():
-    global score
+    global score, risk
+    score, risk = 0
+
     rolls = [random.randint(1, 6) for _ in range(3)]
 
     for row in range(5):
@@ -69,17 +72,20 @@ def roll_dice():
 
         if sorted_rolls == (4, 5, 6):
             print("PoCo!")
+            risk += 4
         elif sorted_rolls == (1, 2, 3):
             print("LoCo!")
+            risk += 2
         else:
             print("Three-of-a-kind!")
+            risk += 3
 
     else:
         score += sum(points[die] for die in rolls)
+        risk += 1
 
     print(f'Rolled {rolls}')
-    print(f'Total Points: {score}') #temporary, setting up winning and losing
-
+    print(f'Total Points: {score}')#temporary, setting up winning and losing
 #===========#
 
 def three_tries():
