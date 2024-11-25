@@ -42,12 +42,33 @@ dice_face = {
         "| ● ● |",
         " ----- "]
 }
-def roll_dice():
-    rolls = [random.randint(1,6) for i in range(3)]
 
-    for row in range(5):
-        print("  ".join(dice_face[dice][row] for dice in rolls))
+points = {1: 100, 2: 2, 3: 3, 4: 4, 5: 5, 6: 60}
+special_scores = {
+    (6, 6, 6): 1000,
+    (4, 5, 6): 900,
+    (5, 5, 5): 800,
+    (4, 4, 4): 700,
+    (3, 3, 3): 600,
+    (2, 2, 2): 500,
+    (1, 1, 1): 400,
+    (1, 2, 4): 300
+}
+
+score = 0
+def roll_dice():
+    global score
+    rolls = [random.randint(1, 6) for _ in range(3)]
+
+    sorted_rolls = tuple(sorted(rolls))
+    if sorted_rolls in special_scores:
+        score += special_scores[sorted_rolls]
+
+    else:
+        score += sum(points[die] for die in rolls)
+
     print(f'Rolled {rolls}')
+    print(f'Total Points: {score}') #temporary, setting up winning and losing
 
 #===========#
 
