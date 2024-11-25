@@ -194,3 +194,4 @@ print(f'{player1}, {player2}, {player3}, and {name}!')
 print(f'Let\'s start the game!')
 rules()
 chips()
+#your version sucks >:(
