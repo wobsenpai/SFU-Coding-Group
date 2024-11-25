@@ -1,0 +1,100 @@
+# Assignment 5
+
+#
+# Full Name:Hiroshi Wong
+#  SFU ID #:301625447
+# SFU Email:hew5@sfu.ca
+#
+
+import random, math
+
+#===========#
+
+dice_face = {
+    1: [" ----- ",
+        "|     |",
+        "|  ●  |",
+        "|     |",
+        " ----- "],
+    2: [" ----- ",
+        "| ●   |",
+        "|     |",
+        "|   ● |",
+        " ----- "],
+    3: [" ----- ",
+        "| ●   |",
+        "|  ●  |",
+        "|   ● |",
+        " ----- "],
+    4: [" ----- ",
+        "| ● ● |",
+        "|     |",
+        "| ● ● |",
+        " ----- "],
+    5: [" ----- ",
+        "| ● ● |",
+        "|  ●  |",
+        "| ● ● |",
+        " ----- "],
+    6: [" ----- ",
+        "| ● ● |",
+        "| ● ● |",
+        "| ● ● |",
+        " ----- "]
+}
+def roll_dice():
+    rolls = [random.randint(1,6) for i in range(3)]
+
+    for row in range(5):
+        print("  ".join(dice_face[dice][row] for dice in rolls))
+    print(f'Rolled {rolls}')
+
+#===========#
+
+def three_tries():
+    attempts = 3
+
+    while attempts > 0:
+        roll_dice()
+        attempts -= 1
+
+        if attempts == 0:
+            print(f"State automatically saved after {3-attempts} attempts")
+            break
+
+        print(f'Attempts left: {attempts}')
+        retry = input('Would you like to try again?: (Yes/No)').strip().lower()
+
+        if retry == "yes":
+            print("Re-rolling...")
+
+        elif retry == "no":
+            print(f"State automatically saved after {3-attempts} attempts")
+            print("Ending Turn")
+            break
+
+        else:
+            print("Invalid input. Please type 'yes' or 'no'.")
+
+#===========#
+
+ran_player1 = {1:"Ariel", 2:"Barney", 3:"Chris", 4:"Dean", 5:"Elmer", 6:"Frank", 7:"Gena", 8:"Herman", 9:"Isaac"}
+ran_player2 = {1:"Jerry", 2:"Khris", 3:"Lindy", 4:"Mei", 5:"Norman", 6:"Oscar", 7:"Peter", 8:"Queen", 9:"Rachel"}
+ran_player3 = {1:"Steven", 2:"Thalia", 3:"Ulysses", 4:"Virgil", 5:"Walter", 6:"Xavier", 7:"Yuri", 8:"Zuko"}
+
+player1 = None
+player2 = None
+player3 = None
+
+def players():
+    player1 = random.choice(ran_player1)
+    player2 = random.choice(ran_player2)
+    player3 = random.choice(ran_player3)
+
+#===========#
+
+name = input("What is your name?: ")
+print(f'Hello {name}, Let\'s play a game!')
+print(f'Our players are...')
+players()
+print(f'{player1}, {player2}, {player3}, and {name}')
