@@ -6,7 +6,7 @@
 # SFU Email:hew5@sfu.ca
 #
 
-import random, math
+import random
 
 #===========#
 
@@ -111,14 +111,14 @@ player2 = None
 player3 = None
 
 def players():
-    player1 = random.choice(ran_player1)
-    player2 = random.choice(ran_player2)
-    player3 = random.choice(ran_player3)
+    global player1, player2, player3
+    player1 = random.choice(list(ran_player1.values()))
+    player2 = random.choice(list(ran_player2.values()))
+    player3 = random.choice(list(ran_player3.values()))
 
 #===========#
-
-def roundcard():
-    round = 0
+# function to be used in the game function
+def roundcard(rounds):
     round_text = f"Round {round}"
     border_len = len(round_text) + 4
 
