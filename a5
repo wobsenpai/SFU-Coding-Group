@@ -88,9 +88,7 @@ def roll_dice():
     print(f'Total Points: {score}')#temporary, setting up winning and losing
 #===========#
 
-def three_tries():
-    attempts = 3
-
+def three_tries(attempts):
     while attempts > 0:
         roll_dice()
         attempts -= 1
