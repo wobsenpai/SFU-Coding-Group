@@ -102,7 +102,7 @@ def three_tries():
 
 #===========#
 
-ran_player1 = {1:"Ariel", 2:"Barney", 3:"Chris", 4:"Dean", 5:"Elmer", 6:"Frank", 7:"Gena", 8:"Herman", 9:"Isaac"}
+ran_player1 = {1:"Ariel", 2:"Barney", 3:"Christ", 4:"Dean", 5:"Elmo", 6:"Frank", 7:"Gena", 8:"Herman", 9:"Isaac"}
 ran_player2 = {1:"Jerry", 2:"Khris", 3:"Lindy", 4:"Mei", 5:"Norman", 6:"Oscar", 7:"Peter", 8:"Queen", 9:"Rachel"}
 ran_player3 = {1:"Steven", 2:"Thalia", 3:"Ulysses", 4:"Virgil", 5:"Walter", 6:"Xavier", 7:"Yuri", 8:"Zuko"}
 
