@@ -127,8 +127,46 @@ def roundcard(rounds):
     print("+" + "-" * (border_len - 2) + "+")
 
 #===========#
+
+tokens = 0
+
+def chips():
+    global tokens
+    chip_num = input("How many chips would you like to start?")
+    tokens += chip_num
+
+#===========#
+
+def rules():
+    rule = input('Would you like to read the rules?: (Yes/No)').strip().lower()
+
+    if rule == "yes":
+        print("Temporary rules filling")
+
+    elif rule == "no":
+        print(f"Understood!")
+
+    else:
+        print("Invalid input. Please type 'yes' or 'no'.")
+
+#===========#
+
+def game():
+    pass
+
+#===========#
+
+print(f'Hello! and welcome to...')
+print("""
++------------+
+| PoCo LoCo! |
++------------+
+""")
 name = input("What is your name?: ")
 print(f'Hello {name}, Let\'s play a game!')
 print(f'Our players are...')
 players()
-print(f'{player1}, {player2}, {player3}, and {name}')
+print(f'{player1}, {player2}, {player3}, and {name}!')
+print(f'Let\'s start the game!')
+rules()
+chips()
