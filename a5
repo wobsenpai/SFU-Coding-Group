@@ -67,6 +67,13 @@ def roll_dice():
     if sorted_rolls in special_scores:
         score += special_scores[sorted_rolls]
 
+        if sorted_rolls == (4, 5, 6):
+            print("PoCo!")
+        elif sorted_rolls == (1, 2, 3):
+            print("LoCo!")
+        else:
+            print("Three-of-a-kind!")
+
     else:
         score += sum(points[die] for die in rolls)
 
