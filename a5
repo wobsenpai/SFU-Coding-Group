@@ -89,7 +89,7 @@ def roll_dice():
 #===========#
 
 def three_tries(tries):
-	 attempts = tries
+    attempts = tries
     while attempts > 0:
         roll_dice()
         attempts -= 1
