@@ -60,6 +60,9 @@ def roll_dice():
     global score
     rolls = [random.randint(1, 6) for _ in range(3)]
 
+    for row in range(5):
+        print("  ".join(dice_face[dice][row] for dice in rolls))
+
     sorted_rolls = tuple(sorted(rolls))
     if sorted_rolls in special_scores:
         score += special_scores[sorted_rolls]
