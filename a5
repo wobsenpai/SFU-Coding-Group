@@ -88,13 +88,14 @@ def roll_dice():
     print(f'Total Points: {score}')#temporary, setting up winning and losing
 #===========#
 
-def three_tries(attempts):
+def three_tries(tries):
+	 attempts = tries
     while attempts > 0:
         roll_dice()
         attempts -= 1
 
         if attempts == 0:
-            print(f"State automatically saved after {3-attempts} attempts")
+            print(f"State automatically saved after {tries-attempts} attempts")
             break
 
         print(f'Attempts left: {attempts}')
@@ -104,7 +105,7 @@ def three_tries(attempts):
             print("Re-rolling...")
 
         elif retry == "no":
-            print(f"State automatically saved after {3-attempts} attempts")
+            print(f"State automatically saved after {tries-attempts} attempts")
             print("Ending Turn")
             break
 
@@ -163,7 +164,8 @@ def rules():
     rule = input('Would you like to read the rules?: (Yes/No)').strip().lower()
 
     if rule == "yes":
-        print("Temporary rules filling")
+        print("PoCoLoCo! is a dice-rolling game played with chips. Players take turns repeatedly rolling three dice, and the first player to lose all their chips is the winner.")
+        print("PocoLoco is played in rounds. In each round, players take turns rolling three dice and try to get the highest score possible.")
 
     elif rule == "no":
         print(f"Understood!")
