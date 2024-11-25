@@ -93,6 +93,16 @@ def players():
 
 #===========#
 
+def roundcard():
+    round = 0
+    round_text = f"Round {round}"
+    border_len = len(round_text) + 4
+
+    print("+" + "-" * (border_len - 2) + "+")
+    print(f'| {round_text} |')
+    print("+" + "-" * (border_len - 2) + "+")
+
+#===========#
 name = input("What is your name?: ")
 print(f'Hello {name}, Let\'s play a game!')
 print(f'Our players are...')
