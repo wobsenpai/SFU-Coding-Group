@@ -195,4 +195,4 @@ print(f'Let\'s start the game!')
 rules()
 chips()
 #your version sucks >:(
-#i need something to push more
+
