@@ -45,14 +45,14 @@ dice_face = {
 
 points = {1: 100, 2: 2, 3: 3, 4: 4, 5: 5, 6: 60}
 special_scores = {
-    (6, 6, 6): 1000,
-    (4, 5, 6): 900,
+    (4, 5, 6): 1000,
+    (6, 6, 6): 900,
     (5, 5, 5): 800,
     (4, 4, 4): 700,
     (3, 3, 3): 600,
     (2, 2, 2): 500,
     (1, 1, 1): 400,
-    (1, 2, 4): 300
+    (1, 2, 3): 300
 }
 
 score = 0
@@ -61,10 +61,10 @@ def roll_dice():
     global score, risk
     score, risk = 0
 
-    rolls = [random.randint(1, 6) for _ in range(3)]
+    rolls = [random.randint(1, 6) for j in range(3)]
 
     for row in range(5):
-        print("  ".join(dice_face[dice][row] for dice in rolls))
+        print("  ".join(dice_face[i][row] for i in rolls))
 
     sorted_rolls = tuple(sorted(rolls))
     if sorted_rolls in special_scores:
@@ -164,8 +164,45 @@ def rules():
     rule = input('Would you like to read the rules?: (Yes/No)').strip().lower()
 
     if rule == "yes":
-        print("PoCoLoCo! is a dice-rolling game played with chips. Players take turns repeatedly rolling three dice, and the first player to lose all their chips is the winner.")
-        print("PocoLoco is played in rounds. In each round, players take turns rolling three dice and try to get the highest score possible.")
+        print("""
+        PoCoLoCo! is a dice-rolling game played with chips. 
+        Players take turns repeatedly rolling three dice, 
+        and the first player to lose all their chips is the 
+        winner. PocoLoco is played in rounds. In each round, 
+        players take turns rolling three dice and try to get 
+        the highest score possible. The order of which player 
+        goes first, second, third and fourth are randomized.
+        The first player has up to three chances to roll the 
+        score they want, however, you can choose to stop early,
+        and the next players can only roll as many times as 
+        previous player or less. 
+        
+        The scores of the dice are as follows:
+        1 = 100 points
+        2 = 2 points
+        3 = 3 points
+        4 = 4 points
+        5 = 5 points
+        6 = 60 points
+        
+        There is also special scores that are above normal scores.
+        These scores, which rank from highest to lowest, are as
+        follows: 
+        1st: PoCo! (4, 5, 6)
+        2nd: (6, 6, 6)
+        3rd: (5, 5, 5)
+        4th: (4, 4, 4)
+        5th: (3, 3, 3)
+        6th: (2, 2, 2)
+        7th: (1, 1, 1)
+        8th: LoCo! (1, 2, 3)
+        
+        In the case of a tie, a tiebreaker will occur, in which a
+        game of roshambo will be played, where the winner of that
+        game will win the round.
+        
+        
+        """)
 
     elif rule == "no":
         print(f"Understood!")
@@ -176,7 +213,7 @@ def rules():
 #===========#
 
 def game():
-    pass
+
 
 #===========#
 
