@@ -118,7 +118,7 @@ def players():
 
 #===========#
 # function to be used in the game function
-def roundcard(rounds):
+def report(rounds):
     round_text = f"Round {round}"
     border_len = len(round_text) + 4
 
@@ -126,14 +126,25 @@ def roundcard(rounds):
     print(f'| {round_text} |')
     print("+" + "-" * (border_len - 2) + "+")
 
+    print(f"""
+    {name}: {tokens}
+    {player1}: {tokens1}
+    {player2}: {tokens2}
+    {player3}: {tokens3}
+    """)
+
 #===========#
 
 tokens = 0
+tokens1 = 0
+tokens2 = 0
+tokens3 = 0
 
 def chips():
-    global tokens
+    global tokens, tokens1, tokens2, tokens3
     chip_num = input("How many chips would you like to start?")
     tokens += chip_num
+    tokens = tokens1, tokens2, tokens3
 
 #===========#
 
