@@ -211,10 +211,10 @@ def report(rounds):
 
 #===========#
 
-def winner(): #I will try to make the winner function to work
+def winner(): #this needs more work
     #make an if function stating that any scores greater than the minimum score will be a winner making 3 winners
     
-    scores = {"user":100, "bot1":2000, "bot2":30000, "bot3":-5}
+    # scores = {"user":100, "bot1":2000, "bot2":30000, "bot3":-5}
     min_user = ''
     min_score = 99999
     for k, v in scores.items():
@@ -222,12 +222,6 @@ def winner(): #I will try to make the winner function to work
             min_score = v
             min_user = k
     print(f'min_user is {min_user} with score of {min_score}') #this will print out the lowest score player and its score
-        
-
-
-    loser = min(scores)
-    print(loser)
-    
     
     
     # winner = max(scores)
@@ -238,7 +232,7 @@ def winner(): #I will try to make the winner function to work
 
 #===========#
 
-tokens = {"user":0, "bot1":0, "bot2":0, "bot3":0}
+tokens = {"user":0, "bot1":0, "bot2":0, "bot3":0} #this might need to be changed to number of chips
 
 def chips():
     while True:
@@ -251,7 +245,7 @@ def chips():
             break
         except ValueError:
             print(f'Please give a non-decimal number')
-    #k
+    #this assigns the number of chips to each player
     for player in players.keys():
         players[player]["num_chip"] = chip_num
 
