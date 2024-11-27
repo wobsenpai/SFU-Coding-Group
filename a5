@@ -6,7 +6,7 @@
 # SFU Email:hew5@sfu.ca, kka187@sfu.ca
 #
 
-import random
+import random, time
 from multiprocessing.managers import Value
 
 #===========#
@@ -120,7 +120,6 @@ def roll_dice(user):
         risk[user] += 1
 
     print(f'Rolled {rolls}')
-    print(f'Total Points for {user}: {scores[user]}')#temporary, setting up winning and losing
 #===========#
 rolls_left = 0
 
@@ -132,8 +131,6 @@ def three_tries(tries, user):
 
         if rolls_remaining == 0:
             print(f"State automatically saved after {tries - rolls_remaining} attempts")
-            # use rolls_remaining instead of rolls_left
-            # rolls_left = tries - rolls_remaining
             break
 
         print(f'attempts left: {rolls_remaining}')
@@ -142,12 +139,12 @@ def three_tries(tries, user):
 
             if retry == "yes":
                 print("Re-rolling...")
+                time.sleep(3)
 
             elif retry == "no":
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
                 print("Ending Turn")
                 
-                # rolls_left = tries - rolls_remaining
                 break
 
             else:
@@ -157,10 +154,11 @@ def three_tries(tries, user):
             if (scores[user]) >= 100:
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
                 print("Ending Turn")
-                # rolls_left = tries - rolls_remaining
+                
                 break
             else:
                 print("Re-rolling...")
+                time.sleep(3)
 
     return tries - rolls_remaining
 
@@ -189,31 +187,29 @@ def report(rounds):
     print("+" + "-" * (border_len - 2) + "+")
     print(f'| {round_text} |')
     print("+" + "-" * (border_len - 2) + "+")
-    
-#round_turn_order = random_turn_order() # returns randomized list of our players
-# eg. ["player 2", "player 1", "user", "player 3"]
-#put the # of chips
+    time.sleep(2)
+
     print(f"""
-    {round_turn_order[0]}: {players[round_turn_order[0]]["name"]}
-    {round_turn_order[1]}: {players[round_turn_order[1]]["name"]}
-    {round_turn_order[2]}: {players[round_turn_order[2]]["name"]}
-    {round_turn_order[3]}: {players[round_turn_order[3]]["name"]}
-          
-    
+    {round_turn_order[0]}: {players[round_turn_order[0]]["name"]} | Chips: {players[round_turn_order[0]]["num_chip"]}
+    {round_turn_order[1]}: {players[round_turn_order[1]]["name"]} | Chips: {players[round_turn_order[1]]["num_chip"]}
+    {round_turn_order[2]}: {players[round_turn_order[2]]["name"]} | Chips: {players[round_turn_order[2]]["num_chip"]}
+    {round_turn_order[3]}: {players[round_turn_order[3]]["name"]} | Chips: {players[round_turn_order[3]]["num_chip"]}
     """)
+    input("\nPress enter to continue...\n")
 
 #===========#
 
 def winner(): #need to be looked over
-        
-    # scores = {"user":100, "player 1":2000, "player 2":30000, "player 3":-5}
     min_user = ''
     min_score = 99999
     for k, v in scores.items():
+    # e.g. scores = {"user":100, "player 1":2000, "player 2":30000, "player 3":-5}    
         if v < min_score:
             min_score = v
-            min_user = k
+            min_user = k  
     print(f'min_user is {min_user} with score of {min_score}') #this will print out the lowest score player and its score
+    
+    loser = check_loser() #checks loser in case of a tie in lowest score
     
     max_user = ''
     max_score = 0
@@ -225,20 +221,24 @@ def winner(): #need to be looked over
     
     #make the highest risk override the rest of the players(but not loser) risk
     for player in scores.keys():
-        if player != min_user:
+        if player != min_user and player != loser:
             risk[player] = risk[max_user]
-    print(f'updated risk: {risk}') #checks if risk works can be deleted later
+    # print(f'updated risk: {risk}') #checks if risk works can be deleted later
     
     # extracts the name of player and the int value of risk and sets it to temp_player and temp_risk
     total_risk = 0
     for temp_player, temp_risk in risk.items(): 
-        if temp_player != min_user:
+        if temp_player != min_user or temp_player != loser:
             total_risk += temp_risk
             players[temp_player]["num_chip"] -= temp_risk
             risk[temp_player] = 0
-        elif temp_player == min_user:
+        else: #temp_player == min_user or temp_player == loser:
             risk[temp_player] = 0
-    players[min_user]["num_chip"] += total_risk
+    #distributes chips to lowest scoring player or loser determined by check_loser()        
+    if loser is None:
+        players[min_user]["num_chip"] += total_risk
+    else:
+        players[loser]["num_chip"] += total_risk
     
     #prints the updated amount of chips
     print('Here is the updated number of chips per player:')
@@ -264,10 +264,47 @@ def check_winner():
             elif scores[player_id] == highest_score:
                 print("for both tied players the score is the same! initiating tiebreaker")
                 winner = rand_tiebreaker(tied_players)
-        print(f'because {winner} has a higher score of {highest_score}, {winner} wins!')  
+        print(f'because {players[winner]["name"]} has a higher score of {highest_score}, {players[winner]["name"]} wins!')  
         return winner
     return None  # No winner yet
 
+def check_loser():
+    # Find the lowest score among players
+    lowest_score = min(scores.values())
+
+    # Get all players with the lowest score
+    tied_lowscore = [player_id for player_id, score in scores.items() if score == lowest_score]
+
+    loser = None
+
+    # If multiple players have the same lowest score
+    if len(tied_lowscore) > 1:
+        print("Multiple players are tied for the lowest score!")
+        loser = rand_tiebreaker(tied_lowscore)  # Resolve tie and select a loser
+    elif len(tied_lowscore) == 1:
+        # Only one player with the lowest score
+        loser = tied_lowscore[0]
+    
+    return loser
+    
+    # if len(tied_players) == 1:
+    #     # Only one player with 0 or fewer chips, return them as the winner
+    #     return tied_players[0]
+    # elif len(tied_players) > 1:
+    #     # Multiple players with 0 or fewer chips, compare their scores
+    #     print(f'there is a tie between {players[tied_players[0]]["name"]} and {players[tied_players[0]]["name"]}')
+    #     highest_score = 0  
+    #     winner = None
+    #     for player_id in tied_players:
+    #         if scores[player_id] > highest_score:
+    #             highest_score = scores[player_id]
+    #             winner = player_id
+    #         elif scores[player_id] == highest_score:
+    #             print("for both tied players the score is the same! initiating tiebreaker")
+    #             winner = rand_tiebreaker(tied_players)
+    #     print(f'because {winner} has a higher score of {highest_score}, {winner} wins!')  
+    #     return winner
+    # return None  # No winner yet
 #===========#
 
 
@@ -298,18 +335,30 @@ def rules():
         PoCoLoCo! is a dice-rolling game played with chips. 
         Players take turns repeatedly rolling three dice, 
         and the first player to lose all their chips is the 
-        winner. PocoLoco is played in rounds. 
-        
+        winner. PocoLoco is played in rounds.
+        """)
+
+        time.sleep(3)
+
+        print("""
         In each round, players take turns rolling three dice 
         and try to get the highest score possible. The order 
         of which player goes first, second, third and fourth
         are randomized.
-        
+        """)
+
+        time.sleep(3)
+
+        print("""
         The first player has up to three chances to roll the 
         score they want, however, you can choose to stop early,
         and the next players can only roll as many times as 
         previous player or less. 
-        
+        """)
+
+        time.sleep(3)
+
+        print("""
         The scores of the dice are as follows:
         1 = 100 points
         2 = 2 points
@@ -317,7 +366,11 @@ def rules():
         4 = 4 points
         5 = 5 points
         6 = 60 points
-        
+        """)
+
+        time.sleep(3)
+
+        print("""
         There is also special scores that are above normal scores.
         These scores, which rank from highest to lowest, are as
         follows: 
@@ -329,21 +382,38 @@ def rules():
         6th: (2, 2, 2)
         7th: (1, 1, 1)
         8th: LoCo! (1, 2, 3)
-        
+        """)
+
+        time.sleep(3)
+
+        print("""        
+        In the case of a tie, a tiebreaker will occur, in which a
+        game of rock-paper-scissors will be played, where the winner 
+        of that game will win the round.
+        """)
+
+        print("""        
         The loser of the round will receive chips equal to the scores
         as follows:
         PoCo!: 4 chips
         3-of-a-kind: 3 chips
         LoCo!: 2 chips
         Normal Score: 1 chip
-        
+        """)
+
+        time.sleep(3)
+
+        print("""
         Rounds will continue until a player has no chips left, in which
         the game will end and that player will win.
+        """)
         
+        time.sleep(3)
+        #edit the rules for tie breaker
+        print("""
         In case that there is a tie with the number of players who have no chips left,
         tiebreaker will occur, it would take the higher score among the tied players to
         determine the ultimate winner!
-        
         """)
 
     elif rule == "no":
