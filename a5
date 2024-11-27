@@ -287,24 +287,6 @@ def check_loser():
     
     return loser
     
-    # if len(tied_players) == 1:
-    #     # Only one player with 0 or fewer chips, return them as the winner
-    #     return tied_players[0]
-    # elif len(tied_players) > 1:
-    #     # Multiple players with 0 or fewer chips, compare their scores
-    #     print(f'there is a tie between {players[tied_players[0]]["name"]} and {players[tied_players[0]]["name"]}')
-    #     highest_score = 0  
-    #     winner = None
-    #     for player_id in tied_players:
-    #         if scores[player_id] > highest_score:
-    #             highest_score = scores[player_id]
-    #             winner = player_id
-    #         elif scores[player_id] == highest_score:
-    #             print("for both tied players the score is the same! initiating tiebreaker")
-    #             winner = rand_tiebreaker(tied_players)
-    #     print(f'because {winner} has a higher score of {highest_score}, {winner} wins!')  
-    #     return winner
-    # return None  # No winner yet
 #===========#
 
 
@@ -320,6 +302,7 @@ def chips():
             break
         except ValueError:
             print(f'Please give a non-decimal number')
+            
     #this assigns the number of chips to each player
     for player in players.keys():
         players[player]["num_chip"] = chip_num #number of chips should be stored in the dictionary
@@ -387,12 +370,6 @@ def rules():
         time.sleep(3)
 
         print("""        
-        In the case of a tie, a tiebreaker will occur, in which a
-        game of rock-paper-scissors will be played, where the winner 
-        of that game will win the round.
-        """)
-
-        print("""        
         The loser of the round will receive chips equal to the scores
         as follows:
         PoCo!: 4 chips
@@ -400,7 +377,10 @@ def rules():
         LoCo!: 2 chips
         Normal Score: 1 chip
         """)
-
+        print("""        
+        In the case that there are multiple players with the same lowest score, a tiebreaker
+        will occur to determine the loser that would recieve the chips.
+        """)
         time.sleep(3)
 
         print("""
@@ -408,12 +388,15 @@ def rules():
         the game will end and that player will win.
         """)
         
-        time.sleep(3)
+        time.sleep(1)
         #edit the rules for tie breaker
         print("""
+        In the case that there are multiple players with the same lowest score, a tiebreaker
+        will occur to determine the loser that would recieve the chips. 
+        
         In case that there is a tie with the number of players who have no chips left,
         tiebreaker will occur, it would take the higher score among the tied players to
-        determine the ultimate winner!
+        determine the ultimate winner! 
         """)
 
     elif rule == "no":
@@ -425,8 +408,8 @@ def rules():
 
 #===========#
 
-#simplest way to break tie
-def rand_tiebreaker(p_names):
+#shuffles the list of names given and returns the first index of the shuffled name
+def rand_tiebreaker(p_names): 
     random.shuffle(p_names)
     return p_names[0]
 
