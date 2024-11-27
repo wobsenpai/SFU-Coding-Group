@@ -56,8 +56,8 @@ special_scores = {
     (1, 2, 3): 300
 }
 
-scores = {"user":0, "bot1":0, "bot2":0, "bot3":0}
-risk = {"user": 0, "bot1": 0, "bot2": 0, "bot3": 0}
+scores = {"user":0, "player 1":0, "player 2":0, "player 3":0}
+risk = {"user": 0, "player 1": 0, "player 2": 0, "player 3": 0}
 
 # player stats to be remembered over entire game
 players = {
@@ -66,18 +66,18 @@ players = {
         "score": 0,
         "num_chip": 0
     },
-    "bot1": {
-        "name": "bot1",
+    "player 1": {
+        "name": "player 1",
         "score": 0,
         "num_chip": 0
     },
-    "bot2": {
-        "name": "bot2",
+    "player 2": {
+        "name": "player 2",
         "score": 0,
         "num_chip": 0
     },
-    "bot3": {
-        "name": "bot3",
+    "player 3": {
+        "name": "player 3",
         "score": 0,
         "num_chip": 0
     }
@@ -138,7 +138,7 @@ def three_tries(tries, user):
 
         print(f'attempts left: {rolls_remaining}')
         if user == "user": # if user is human player
-            retry = input('Would you like to try again?: (Yes/No)').strip().lower()
+            retry = input('Would you like to try again?: (Yes/No) ').strip().lower()
 
             if retry == "yes":
                 print("Re-rolling...")
@@ -152,6 +152,7 @@ def three_tries(tries, user):
 
             else:
                 print("Invalid input. Please type 'yes' or 'no'.")
+                retry = input('Would you like to try again?: (Yes/No)').strip().lower()
         else: 
             if (scores[user]) >= 100:
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
@@ -180,9 +181,9 @@ player = {0:"user", 1:"player1", 2:"player2", 3:"player3"}
 
 # unused function, renamed to init_players
 def init_players():
-    players["bot1"]["name"] = random.choice(list(ran_player1.values()))
-    players["bot2"]["name"] = random.choice(list(ran_player2.values()))
-    players["bot3"]["name"] = random.choice(list(ran_player3.values()))
+    players["player 1"]["name"] = random.choice(list(ran_player1.values()))
+    players["player 2"]["name"] = random.choice(list(ran_player2.values()))
+    players["player 3"]["name"] = random.choice(list(ran_player3.values()))
 
     # player[1] = random.choice(list(ran_player1.values()))
     # player[2] = random.choice(list(ran_player2.values()))
@@ -201,19 +202,27 @@ def report(rounds):
     print("+" + "-" * (border_len - 2) + "+")
     print(f'| {round_text} |')
     print("+" + "-" * (border_len - 2) + "+")
+    
+#round_turn_order = random_turn_order() # returns randomized list of our players
+# eg. ["player 2", "player 1", "user", "player 3"]
 #put the # of chips
     print(f"""
-    user: {players["user"]["name"]}
-    {player[1]}: {players["bot1"]["name"]}
-    {player[2]}: {players["bot2"]["name"]}
-    {player[3]}: {players["bot3"]["name"]}
+    {round_turn_order[0]}: {players[round_turn_order[0]]["name"]}
+    {round_turn_order[1]}: {players[round_turn_order[1]]["name"]}
+    {round_turn_order[2]}: {players[round_turn_order[2]]["name"]}
+    {round_turn_order[3]}: {players[round_turn_order[3]]["name"]}
+          
+    
     """)
-
+# {player[0]}: {players["user"]["name"]}
+#     {player[1]}: {players["player 1"]["name"]}
+#     {player[2]}: {players["player 2"]["name"]}
+#     {player[3]}: {players["player 3"]["name"]}
 #===========#
 
 def winner(): #need to be looked over
         
-    # scores = {"user":100, "bot1":2000, "bot2":30000, "bot3":-5}
+    # scores = {"user":100, "player 1":2000, "player 2":30000, "player 3":-5}
     min_user = ''
     min_score = 99999
     for k, v in scores.items():
@@ -269,12 +278,17 @@ def check_winner():
         return tied_players[0]
     elif len(tied_players) > 1:
         # Multiple players with 0 or fewer chips, compare their scores
+        print(f'there is a tie between {tied_players[0]} and {tied_players[1]}')
         highest_score = 0  
         winner = None
         for player_id in tied_players:
             if scores[player_id] > highest_score:
                 highest_score = scores[player_id]
                 winner = player_id
+            elif scores[player_id] == highest_score:
+                print("for both tied players the score is the same! initiating tiebreaker")
+                winner = rand_tiebreaker(tied_players)
+                
         return winner
     
     return None  # No winner yet
@@ -298,10 +312,6 @@ def chips():
     for player in players.keys():
         players[player]["num_chip"] = chip_num #number of chips should be stored in the dictionary
     
-    # tokens["user"] = chip_num
-    # tokens["bot1"] = chip_num
-    # tokens["bot2"] = chip_num
-    # tokens["bot3"] = chip_num
 
 #===========#
 
@@ -345,10 +355,6 @@ def rules():
         7th: (1, 1, 1)
         8th: LoCo! (1, 2, 3)
         
-        In the case of a tie, a tiebreaker will occur, in which a
-        game of rock-paper-scissors will be played, where the winner 
-        of that game will win the round.
-        
         The loser of the round will receive chips equal to the scores
         as follows:
         PoCo!: 4 chips
@@ -358,6 +364,11 @@ def rules():
         
         Rounds will continue until a player has no chips left, in which
         the game will end and that player will win.
+        
+        In case that there is a tie with the number of players who have no chips left,
+        tiebreaker will occur, it would take the higher score among the tied players to
+        determine the ultimate winner!
+        
         """)
 
     elif rule == "no":
@@ -421,18 +432,19 @@ print("""
 print(f'Our players are...')
 init_players()
 
-print(f'{players["bot1"]['name']}, {players["bot2"]['name']}, {players["bot3"]['name']}, and {name}!')
+round_turn_order = random_turn_order() # returns randomized list of our players
+# eg. ["player 2", "player 1", "user", "player 3"]
+print(f'{players["player 1"]['name']}, {players["player 2"]['name']}, {players["player 3"]['name']}, and {name}!')
 print(f'Let\'s start the game!')
 rules()
 chips()
 roundnum = 0
 
-user = player[0]
-bot1 = player[1]
-bot2 = player[2]
-bot3 = player[3]
-round_turn_order = random_turn_order() # returns randomized list of our players
-# eg. ["bot2", "bot1", "user", "bot3"]
+# user = player[0]
+# player 1 = player[1]
+# player 2 = player[2]
+# player 3 = player[3]
+
 temp_winner = None
 while not temp_winner:
     # round start
