@@ -12,36 +12,36 @@ from multiprocessing.managers import Value
 #===========#
 
 dice_face = {
-    1: [" ----- ",
-        "|     |",
-        "|  ●  |",
-        "|     |",
-        " ----- "],
-    2: [" ----- ",
-        "| ●   |",
-        "|     |",
-        "|   ● |",
-        " ----- "],
-    3: [" ----- ",
-        "| ●   |",
-        "|  ●  |",
-        "|   ● |",
-        " ----- "],
-    4: [" ----- ",
-        "| ● ● |",
-        "|     |",
-        "| ● ● |",
-        " ----- "],
-    5: [" ----- ",
-        "| ● ● |",
-        "|  ●  |",
-        "| ● ● |",
-        " ----- "],
-    6: [" ----- ",
-        "| ● ● |",
-        "| ● ● |",
-        "| ● ● |",
-        " ----- "]
+    1: [" --------- ",
+        "|         |",
+        "|    ●    |",
+        "|         |",
+        " --------- "],
+    2: [" --------- ",
+        "|  ●      |",
+        "|         |",
+        "|      ●  |",
+        " --------- "],
+    3: [" --------- ",
+        "| ●       |",
+        "|    ●    |",
+        "|       ● |",
+        " --------- "],
+    4: [" --------- ",
+        "| ●     ● |",
+        "|         |",
+        "| ●     ● |",
+        " --------- "],
+    5: [" --------- ",
+        "| ●     ● |",
+        "|    ●    |",
+        "| ●     ● |",
+        " --------- "],
+    6: [" --------- ",
+        "| ●     ● |",
+        "| ●     ● |",
+        "| ●     ● |",
+        " --------- "]
 }
 
 points = {1: 100, 2: 2, 3: 3, 4: 4, 5: 5, 6: 60}
@@ -139,11 +139,12 @@ def three_tries(tries, user):
 
             if retry == "yes":
                 print("Re-rolling...")
-                time.sleep(3)
+                time.sleep(1)
 
             elif retry == "no":
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
-                print("Ending Turn")
+                # print("Ending Turn")
+                time.sleep(1)
                 
                 break
 
@@ -153,12 +154,13 @@ def three_tries(tries, user):
         else: 
             if (scores[user]) >= 100:
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
-                print("Ending Turn")
+                # print("Ending Turn")
+                time.sleep(1)
                 
                 break
             else:
                 print("Re-rolling...")
-                time.sleep(3)
+                time.sleep(1)
 
     return tries - rolls_remaining
 
@@ -187,7 +189,7 @@ def report(rounds):
     print("+" + "-" * (border_len - 2) + "+")
     print(f'| {round_text} |')
     print("+" + "-" * (border_len - 2) + "+")
-    time.sleep(2)
+    time.sleep(1)
 
     print(f"""
     {round_turn_order[0]}: {players[round_turn_order[0]]["name"]} | Chips: {players[round_turn_order[0]]["num_chip"]}
@@ -207,7 +209,7 @@ def winner(): #need to be looked over
         if v < min_score:
             min_score = v
             min_user = k  
-    print(f'min_user is {min_user} with score of {min_score}') #this will print out the lowest score player and its score
+    print(f'\nUser with the LOWEST score is {players[min_user]["name"]} with score of {min_score}') #this will print out the lowest score player and its score
     
     loser = check_loser() #checks loser in case of a tie in lowest score
     
@@ -217,7 +219,7 @@ def winner(): #need to be looked over
         if v > max_score:
             max_score = v
             max_user = k
-    print(f'max_user is {max_user} with score of {max_score}')
+    print(f'User with the HIGHEST score is {players[max_user]["name"]} with score of {max_score}\n')
     
     #make the highest risk override the rest of the players(but not loser) risk
     for player in scores.keys():
@@ -247,14 +249,19 @@ def winner(): #need to be looked over
 
     
 def check_winner():
+    #sets tied_players to the list of players with the number of chips <= 0
     tied_players = [player_id for player_id, player_data in players.items() if player_data["num_chip"] <= 0]
     
     if len(tied_players) == 1:
         # Only one player with 0 or fewer chips, return them as the winner
         return tied_players[0]
     elif len(tied_players) > 1:
+        if len(tied_players) == 2:
+            print(f"There is a tie between {players[tied_players[0]]['name']} and {players[tied_players[1]]['name']}")
+        elif len(tied_players) == 3:
+            print(f"There is a tie between {players[tied_players[0]]['name']}, {players[tied_players[1]]['name']} and {players[tied_players[2]]['name']}")
+        
         # Multiple players with 0 or fewer chips, compare their scores
-        print(f'there is a tie between {players[tied_players[0]]["name"]} and {players[tied_players[0]]["name"]}')
         highest_score = 0  
         winner = None
         for player_id in tied_players:
@@ -264,7 +271,7 @@ def check_winner():
             elif scores[player_id] == highest_score:
                 print("for both tied players the score is the same! initiating tiebreaker")
                 winner = rand_tiebreaker(tied_players)
-        print(f'because {players[winner]["name"]} has a higher score of {highest_score}, {players[winner]["name"]} wins!')  
+        print(f'because {players[winner]["name"]} has a higher score of {highest_score}, {players[winner]["name"]} wins the tiebreaker!')  
         return winner
     return None  # No winner yet
 
@@ -281,10 +288,10 @@ def check_loser():
     if len(tied_lowscore) > 1:
         print("Multiple players are tied for the lowest score!")
         loser = rand_tiebreaker(tied_lowscore)  # Resolve tie and select a loser
+        print(f'With the tiebreaker: the loser is {players[loser]["name"]}')
     elif len(tied_lowscore) == 1:
         # Only one player with the lowest score
         loser = tied_lowscore[0]
-    
     return loser
     
 #===========#
@@ -390,10 +397,7 @@ def rules():
         
         time.sleep(1)
         #edit the rules for tie breaker
-        print("""
-        In the case that there are multiple players with the same lowest score, a tiebreaker
-        will occur to determine the loser that would recieve the chips. 
-        
+        print("""       
         In case that there is a tie with the number of players who have no chips left,
         tiebreaker will occur, it would take the higher score among the tied players to
         determine the ultimate winner! 
@@ -426,9 +430,6 @@ print("""
 print(f'Our players are...')
 init_players()
 
-round_turn_order = random_turn_order() # returns randomized list of our players
-# eg. ["player 2", "player 1", "user", "player 3"]
-
 print(f'{players["player 1"]['name']}, {players["player 2"]['name']}, {players["player 3"]['name']}, and {name}!')
 print(f'Let\'s start the game!')
 rules()
@@ -439,14 +440,19 @@ temp_winner = None
 while not temp_winner:
     # round start
     roundnum += 1
+    round_turn_order = random_turn_order() # returns randomized list of our players
+    # eg. ["player 2", "player 1", "user", "player 3"]
+    
     report(roundnum)
-
+    
     # loop through each user from round_turn_order
     player_tries = 3
     for p in round_turn_order:
         print(f'It is {players[p]["name"]}\'s turn')
+        time.sleep(1)
         tries_used = three_tries(player_tries, p)
         player_tries = tries_used
+        print("Ending turn")
         input("Press enter to continue...")
     winner()
     temp_winner = check_winner()
