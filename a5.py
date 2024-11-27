@@ -203,10 +203,10 @@ def report(rounds):
     print("+" + "-" * (border_len - 2) + "+")
 
     print(f"""
-    {player[0]}: {tokens["user"]}
-    {player[1]}: {tokens["bot1"]}
-    {player[2]}: {tokens["bot2"]}
-    {player[3]}: {tokens["bot3"]}
+    {player[0]}: {players["user"]["name"]}
+    {player[1]}: {players["bot1"]["name"]}
+    {player[2]}: {players["bot2"]["name"]}
+    {player[3]}: {players["bot3"]["name"]}
     """)
 
 #===========#
@@ -223,6 +223,47 @@ def winner(): #this needs more work
             min_user = k
     print(f'min_user is {min_user} with score of {min_score}') #this will print out the lowest score player and its score
     
+    max_user = ''
+    max_score = 0
+    for k, v in scores.items():
+        if v < max_score:
+            max_score = v
+            max_user = k
+    print(f'min_user is {max_user} with score of {max_score}')
+    
+    #make the highest risk override the rest of the players(but not loser) risk
+    for player in scores:
+        if player != min_user:
+            risk[player] = risk[max_user]
+    print(f'updated risk: {risk}')#DONE YIPPIE
+    
+    # winners = {}
+    # for player, score, in scores.items():
+    #     if player != min_user:
+    #         winners[player] = score
+    # print(f'distributing chips to {min_user} with the lowest score')
+    
+    # risk = {"user": 0, "bot1": 0, "bot2": 0, "bot3": 0}
+    # total_risk = 0
+    #extracts the name of player and the int value of risk and sets it to temp_player and temp_risk
+    # for temp_player, temp_risk in risk.items(): 
+    #     if temp_player != min_user:
+    #         total_risk += temp_risk
+    #         players[temp_player]["num_chip"] -= temp_risk
+    #         risk[temp_player] = 0
+            
+    #     elif temp_player == min_user:
+    #         risk[temp_player] = 0
+    
+    # total_risk += players[min_user]["num_chip"]
+    
+    #prints the updated amount of chips
+    print('Here is the updated number of chips per player:')
+    for player_id, player_data in players.items():
+        print(f'{player_data['name']}, Chips: {player_data['num_chip']}')
+        
+            
+    
     
     # winner = max(scores)
     
@@ -232,9 +273,10 @@ def winner(): #this needs more work
 
 #===========#
 
-tokens = {"user":0, "bot1":0, "bot2":0, "bot3":0} #this might need to be changed to number of chips
+# tokens = {"user":0, "bot1":0, "bot2":0, "bot3":0} #this might need to be changed to number of chips
 
 def chips():
+    global chip_num
     while True:
         try:
             chip_num = int(input("How many chips would you like to start? The default amount is 10"))
@@ -247,8 +289,8 @@ def chips():
             print(f'Please give a non-decimal number')
     #this assigns the number of chips to each player
     for player in players.keys():
-        players[player]["num_chip"] = chip_num
-
+        players[player]["num_chip"] = chip_num #number of chips should be stored in the dictionary
+    
     # tokens["user"] = chip_num
     # tokens["bot1"] = chip_num
     # tokens["bot2"] = chip_num
@@ -354,7 +396,6 @@ def tiebreaker():
                 break
 
 #===========#
-
 name = input("What is your name?: ")
 player[0] = name
 print(f'Hello {name}, Let\'s play a game!')
@@ -376,7 +417,7 @@ bot1 = player[1]
 bot2 = player[2]
 bot3 = player[3]
 while True:
-    if tokens != 0:
+    if chip_num > 0:
         # round start
         roundnum += 1
         round_turn_order = random_turn_order() # returns randomized list of our players
@@ -397,5 +438,6 @@ while True:
         # three_tries(rolls_left, 2)
         # print(f'It is {player[3]}\'s turn')
         # three_tries(rolls_left, 3)
+
 
 #===========#
