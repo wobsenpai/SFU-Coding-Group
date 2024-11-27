@@ -62,7 +62,7 @@ risk = {"user": 0, "bot1": 0, "bot2": 0, "bot3": 0}
 # player stats to be remembered over entire game
 players = {
     "user": {
-        "name": "kana",
+        "name": "",
         "score": 0,
         "num_chip": 0
     },
@@ -137,7 +137,7 @@ def three_tries(tries, user):
             break
 
         print(f'attempts left: {rolls_remaining}')
-        if user == name: # if user is human player
+        if user == "user": # if user is human player
             retry = input('Would you like to try again?: (Yes/No)').strip().lower()
 
             if retry == "yes":
@@ -201,9 +201,9 @@ def report(rounds):
     print("+" + "-" * (border_len - 2) + "+")
     print(f'| {round_text} |')
     print("+" + "-" * (border_len - 2) + "+")
-
+#put the # of chips
     print(f"""
-    {player[0]}: {players["user"]["name"]}
+    user: {players["user"]["name"]}
     {player[1]}: {players["bot1"]["name"]}
     {player[2]}: {players["bot2"]["name"]}
     {player[3]}: {players["bot3"]["name"]}
@@ -230,14 +230,13 @@ def winner(): #need to be looked over
             max_user = k
     print(f'max_user is {max_user} with score of {max_score}')
     
-    tied_players = [player for player, score in scores.items() if score == min_score]
-    if len(tied_players) > 1:
-        print("There's a tie for the lowest score!")
-        tied_player_names = [players[player]["name"] for player in tied_players]
-        print(f"Players in the tie: {', '.join(tied_player_names)}")
+    # tied_players = [player for player, score in scores.items() if score == min_score]
+    # if len(tied_players) > 1:
+    #     print("There's a tie for the lowest score!")
+    #     tied_player_names = [players[player]["name"] for player in tied_players]
+    #     print(f"Players in the tie: {', '.join(tied_player_names)}")
+    #     rand_tiebreaker(tied_players)
 
-    # do tiebreaker
-    
 
     #make the highest risk override the rest of the players(but not loser) risk
     for player in scores.keys():
@@ -260,19 +259,28 @@ def winner(): #need to be looked over
     print('Here is the updated number of chips per player:')
     for player_data in players.values():
         print(f"{player_data['name']}, Chips: {player_data['num_chip']}")
-    
-    # winner = max(scores)
-    
-    # print(f'the winner of this round is {winner}, and the loser of this round is {loser}')
-    # print(f'Changing scores...')
+
     
 def check_winner():
-    for player_id, player_data in players.items():
-        if player_data["num_chip"] == 0:
-            return player_id  # Return the ID of the winner (player with 0 chips)
+    tied_players = [player_id for player_id, player_data in players.items() if player_data["num_chip"] <= 0]
+    
+    if len(tied_players) == 1:
+        # Only one player with 0 or fewer chips, return them as the winner
+        return tied_players[0]
+    elif len(tied_players) > 1:
+        # Multiple players with 0 or fewer chips, compare their scores
+        highest_score = 0  
+        winner = None
+        for player_id in tied_players:
+            if scores[player_id] > highest_score:
+                highest_score = scores[player_id]
+                winner = player_id
+        return winner
+    
     return None  # No winner yet
 
 #===========#
+
 
 def chips():
     global chip_num
@@ -361,6 +369,12 @@ def rules():
 
 #===========#
 
+#simplest way to break tie
+def rand_tiebreaker(p_names):
+    random.shuffle(p_names)
+    return p_names[0]
+
+
 def tiebreaker():
     while True:
         user_action = input("Enter a choice (rock, paper, scissors): ")
@@ -396,7 +410,7 @@ def tiebreaker():
 
 #===========#
 name = input("What is your name?: ")
-player[0] = name
+players["user"]["name"] = name
 print(f'Hello {name}, Let\'s play a game!')
 print(f'Hello! and welcome to...')
 print("""
@@ -406,24 +420,21 @@ print("""
 """)
 print(f'Our players are...')
 init_players()
-print(f'{player[1]}, {player[2]}, {player[3]}, and {name}!')
+
+print(f'{players["bot1"]['name']}, {players["bot2"]['name']}, {players["bot3"]['name']}, and {name}!')
 print(f'Let\'s start the game!')
 rules()
 chips()
 roundnum = 0
+
 user = player[0]
 bot1 = player[1]
 bot2 = player[2]
 bot3 = player[3]
-
 round_turn_order = random_turn_order() # returns randomized list of our players
 # eg. ["bot2", "bot1", "user", "bot3"]
-while True:
-    winner_id = check_winner()
-    if winner_id:
-        print(f"{players[winner_id]['name']} has 0 chips and wins the game! ")
-        break
-    
+temp_winner = None
+while not temp_winner:
     # round start
     roundnum += 1
     report(roundnum)
@@ -436,7 +447,8 @@ while True:
         player_tries = tries_used
         input("Press enter to continue...")
     winner()
-        
+    temp_winner = check_winner()
+print(f"{players[temp_winner]['name']} has {players[temp_winner]['num_chip']} chips and wins the game! ")
     # print(f'It is {player[1]}\'s turn')
     # three_tries(rolls_left, 1)
     # print(f'It is {player[2]}\'s turn')
