@@ -91,7 +91,7 @@ def random_turn_order():
     random.shuffle(temp_player_list)
     return temp_player_list 
 
-
+#this cannot be user and have to be universal as user is defined below and roll_dice should work for all players
 def roll_dice(user):
     scores[user] = 0
     risk[user] = 0
@@ -126,7 +126,7 @@ rolls_left = 0
 
 def three_tries(tries, user):
     rolls_remaining = tries
-    while rolls_remaining > 0:
+    while rolls_remaining > 0: 
         roll_dice(user)
         rolls_remaining -= 1
 
@@ -211,9 +211,8 @@ def report(rounds):
 
 #===========#
 
-def winner(): #this needs more work
-    #make an if function stating that any scores greater than the minimum score will be a winner making 3 winners
-    
+def winner(): #need to be looked over
+        
     # scores = {"user":100, "bot1":2000, "bot2":30000, "bot3":-5}
     min_user = ''
     min_score = 99999
@@ -226,50 +225,49 @@ def winner(): #this needs more work
     max_user = ''
     max_score = 0
     for k, v in scores.items():
-        if v < max_score:
+        if v > max_score:
             max_score = v
             max_user = k
-    print(f'min_user is {max_user} with score of {max_score}')
+    print(f'max_user is {max_user} with score of {max_score}')
     
+    tied_players = [player for player, score in scores.items() if score == min_score]
+    if len(tied_players) > 1:
+        print("There's a tie for the lowest score!")
+        tied_player_names = [players[player]["name"] for player in tied_players]
+        print(f"Players in the tie: {', '.join(tied_player_names)}")
     #make the highest risk override the rest of the players(but not loser) risk
     for player in scores:
         if player != min_user:
             risk[player] = risk[max_user]
-    print(f'updated risk: {risk}')#DONE YIPPIE
+    print(f'updated risk: {risk}') #checks if risk works can be deleted later
     
-    # winners = {}
-    # for player, score, in scores.items():
-    #     if player != min_user:
-    #         winners[player] = score
-    # print(f'distributing chips to {min_user} with the lowest score')
-    
-    # risk = {"user": 0, "bot1": 0, "bot2": 0, "bot3": 0}
-    # total_risk = 0
-    #extracts the name of player and the int value of risk and sets it to temp_player and temp_risk
-    # for temp_player, temp_risk in risk.items(): 
-    #     if temp_player != min_user:
-    #         total_risk += temp_risk
-    #         players[temp_player]["num_chip"] -= temp_risk
-    #         risk[temp_player] = 0
+    # extracts the name of player and the int value of risk and sets it to temp_player and temp_risk
+    for temp_player, temp_risk in risk.items(): 
+        if temp_player != min_user:
+            total_risk += temp_risk
+            players[temp_player]["num_chip"] -= temp_risk
+            risk[temp_player] = 0
             
-    #     elif temp_player == min_user:
-    #         risk[temp_player] = 0
+        elif temp_player == min_user:
+            risk[temp_player] = 0
     
-    # total_risk += players[min_user]["num_chip"]
+    total_risk += players[min_user]["num_chip"]
     
     #prints the updated amount of chips
     print('Here is the updated number of chips per player:')
     for player_id, player_data in players.items():
-        print(f'{player_data['name']}, Chips: {player_data['num_chip']}')
-        
-            
-    
+        print(f"{player_data['name']}, Chips: {player_data['num_chip']}")
     
     # winner = max(scores)
     
     # print(f'the winner of this round is {winner}, and the loser of this round is {loser}')
     # print(f'Changing scores...')
-
+    
+def check_winner():
+    for player_id, player_data in players.items():
+        if player_data["num_chip"] == 0:
+            return player_id  # Return the ID of the winner (player with 0 chips)
+    return None  # No winner yet
 
 #===========#
 
@@ -279,7 +277,7 @@ def chips():
     global chip_num
     while True:
         try:
-            chip_num = int(input("How many chips would you like to start? The default amount is 10"))
+            chip_num = int(input("How many chips would you like to start? The default amount is 10. "))
             #b/c we cannot play if the num of chips is 0 i added a feature to not let that happen -K
             if (chip_num <= 0):
                 chip_num = 10
@@ -416,28 +414,35 @@ user = player[0]
 bot1 = player[1]
 bot2 = player[2]
 bot3 = player[3]
-while True:
-    if chip_num > 0:
-        # round start
-        roundnum += 1
-        round_turn_order = random_turn_order() # returns randomized list of our players
-        # eg. ["bot2", "bot1", "user", "bot3"]
-        report(roundnum)
 
-        # loop through each user from round_turn_order
-        player_tries = 3
-        for p in round_turn_order:
-            print(f'It is {players[p]["name"]}\'s turn')
-            tries_used = three_tries(player_tries, p)
-            player_tries = tries_used
-        winner()
-            
-        # print(f'It is {player[1]}\'s turn')
-        # three_tries(rolls_left, 1)
-        # print(f'It is {player[2]}\'s turn')
-        # three_tries(rolls_left, 2)
-        # print(f'It is {player[3]}\'s turn')
-        # three_tries(rolls_left, 3)
+round_turn_order = random_turn_order() # returns randomized list of our players
+# eg. ["bot2", "bot1", "user", "bot3"]
+while True:
+    winner_id = check_winner()
+    if winner_id:
+        print(f"{players[winner_id]['name']} has 0 chips and wins the game! ")
+        break
+    
+    # round start
+    roundnum += 1
+    report(roundnum)
+
+    # loop through each user from round_turn_order
+    player_tries = 3
+    for p in round_turn_order:
+        print(f'It is {players[p]["name"]}\'s turn')
+        tries_used = three_tries(player_tries, p)
+        player_tries = tries_used
+        input("Press enter to continue...")
+    winner()
+        
+    # print(f'It is {player[1]}\'s turn')
+    # three_tries(rolls_left, 1)
+    # print(f'It is {player[2]}\'s turn')
+    # three_tries(rolls_left, 2)
+    # print(f'It is {player[3]}\'s turn')
+    # three_tries(rolls_left, 3)
+
 
 
 #===========#
