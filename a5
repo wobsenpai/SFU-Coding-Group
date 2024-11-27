@@ -2,8 +2,8 @@
 
 #
 # Full Name:Hiroshi Wong, Kanamu Kobayashi
-#  SFU ID #:301625447
-# SFU Email:hew5@sfu.ca
+#  SFU ID #:301625447, 301616359
+# SFU Email:hew5@sfu.ca, kka187@sfu.ca
 #
 
 import random
@@ -163,13 +163,6 @@ def three_tries(tries, user):
                 print("Re-rolling...")
 
     return tries - rolls_remaining
-#===========#
-
-def ai_turn(tries, bot_name):
-    print(f"\n{bot_name}'s turn begins!")
-    three_tries(tries, bot_name)
-    
-
 
 #===========#
 
@@ -185,12 +178,6 @@ def init_players():
     players["player 2"]["name"] = random.choice(list(ran_player2.values()))
     players["player 3"]["name"] = random.choice(list(ran_player3.values()))
 
-    # player[1] = random.choice(list(ran_player1.values()))
-    # player[2] = random.choice(list(ran_player2.values()))
-    # player[3] = random.choice(list(ran_player3.values()))
-    # scores[1] = player[1]
-    # scores[2] = player[2]
-    # scores[3] = player[3]
 
 #===========#
 # function to be used in the game function
@@ -214,10 +201,7 @@ def report(rounds):
           
     
     """)
-# {player[0]}: {players["user"]["name"]}
-#     {player[1]}: {players["player 1"]["name"]}
-#     {player[2]}: {players["player 2"]["name"]}
-#     {player[3]}: {players["player 3"]["name"]}
+
 #===========#
 
 def winner(): #need to be looked over
@@ -239,14 +223,6 @@ def winner(): #need to be looked over
             max_user = k
     print(f'max_user is {max_user} with score of {max_score}')
     
-    # tied_players = [player for player, score in scores.items() if score == min_score]
-    # if len(tied_players) > 1:
-    #     print("There's a tie for the lowest score!")
-    #     tied_player_names = [players[player]["name"] for player in tied_players]
-    #     print(f"Players in the tie: {', '.join(tied_player_names)}")
-    #     rand_tiebreaker(tied_players)
-
-
     #make the highest risk override the rest of the players(but not loser) risk
     for player in scores.keys():
         if player != min_user:
@@ -278,7 +254,7 @@ def check_winner():
         return tied_players[0]
     elif len(tied_players) > 1:
         # Multiple players with 0 or fewer chips, compare their scores
-        print(f'there is a tie between {tied_players[0]} and {tied_players[1]}')
+        print(f'there is a tie between {players[tied_players[0]]["name"]} and {players[tied_players[0]]["name"]}')
         highest_score = 0  
         winner = None
         for player_id in tied_players:
@@ -288,9 +264,8 @@ def check_winner():
             elif scores[player_id] == highest_score:
                 print("for both tied players the score is the same! initiating tiebreaker")
                 winner = rand_tiebreaker(tied_players)
-                
+        print(f'because {winner} has a higher score of {highest_score}, {winner} wins!')  
         return winner
-    
     return None  # No winner yet
 
 #===========#
@@ -385,41 +360,7 @@ def rand_tiebreaker(p_names):
     random.shuffle(p_names)
     return p_names[0]
 
-
-def tiebreaker():
-    while True:
-        user_action = input("Enter a choice (rock, paper, scissors): ")
-        possible_actions = ["rock", "paper", "scissors"]
-        computer_action = random.choice(possible_actions)
-        print(f"\nYou chose {user_action}, computer chose {computer_action}.\n")
-
-        if user_action == computer_action:
-            print(f"Both players selected {user_action}. It's a tie!")
-        elif user_action == "rock":
-            if computer_action == "scissors":
-                print("Rock smashes scissors! You win!")
-                break
-            else:
-                print("Paper covers rock! You lose.")
-                break
-
-        elif user_action == "paper":
-            if computer_action == "rock":
-                print("Paper covers rock! You win!")
-                break
-            else:
-                print("Scissors cuts paper! You lose.")
-                break
-
-        elif user_action == "scissors":
-            if computer_action == "paper":
-                print("Scissors cuts paper! You win!")
-                break
-            else:
-                print("Rock smashes scissors! You lose.")
-                break
-
-#===========#
+#====== GAME START =====#
 name = input("What is your name?: ")
 players["user"]["name"] = name
 print(f'Hello {name}, Let\'s play a game!')
@@ -434,16 +375,12 @@ init_players()
 
 round_turn_order = random_turn_order() # returns randomized list of our players
 # eg. ["player 2", "player 1", "user", "player 3"]
+
 print(f'{players["player 1"]['name']}, {players["player 2"]['name']}, {players["player 3"]['name']}, and {name}!')
 print(f'Let\'s start the game!')
 rules()
 chips()
 roundnum = 0
-
-# user = player[0]
-# player 1 = player[1]
-# player 2 = player[2]
-# player 3 = player[3]
 
 temp_winner = None
 while not temp_winner:
@@ -461,13 +398,5 @@ while not temp_winner:
     winner()
     temp_winner = check_winner()
 print(f"{players[temp_winner]['name']} has {players[temp_winner]['num_chip']} chips and wins the game! ")
-    # print(f'It is {player[1]}\'s turn')
-    # three_tries(rolls_left, 1)
-    # print(f'It is {player[2]}\'s turn')
-    # three_tries(rolls_left, 2)
-    # print(f'It is {player[3]}\'s turn')
-    # three_tries(rolls_left, 3)
-
-
 
 #===========#
