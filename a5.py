@@ -235,27 +235,30 @@ def winner(): #need to be looked over
         print("There's a tie for the lowest score!")
         tied_player_names = [players[player]["name"] for player in tied_players]
         print(f"Players in the tie: {', '.join(tied_player_names)}")
+
+    # do tiebreaker
+    
+
     #make the highest risk override the rest of the players(but not loser) risk
-    for player in scores:
+    for player in scores.keys():
         if player != min_user:
             risk[player] = risk[max_user]
     print(f'updated risk: {risk}') #checks if risk works can be deleted later
     
     # extracts the name of player and the int value of risk and sets it to temp_player and temp_risk
+    total_risk = 0
     for temp_player, temp_risk in risk.items(): 
         if temp_player != min_user:
             total_risk += temp_risk
             players[temp_player]["num_chip"] -= temp_risk
             risk[temp_player] = 0
-            
         elif temp_player == min_user:
             risk[temp_player] = 0
-    
-    total_risk += players[min_user]["num_chip"]
+    players[min_user]["num_chip"] += total_risk
     
     #prints the updated amount of chips
     print('Here is the updated number of chips per player:')
-    for player_id, player_data in players.items():
+    for player_data in players.values():
         print(f"{player_data['name']}, Chips: {player_data['num_chip']}")
     
     # winner = max(scores)
@@ -270,8 +273,6 @@ def check_winner():
     return None  # No winner yet
 
 #===========#
-
-# tokens = {"user":0, "bot1":0, "bot2":0, "bot3":0} #this might need to be changed to number of chips
 
 def chips():
     global chip_num
