@@ -91,7 +91,6 @@ def random_turn_order():
     random.shuffle(temp_player_list)
     return temp_player_list 
 
-#this cannot be user and have to be universal as user is defined below and roll_dice should work for all players
 def roll_dice(user):
     scores[user] = 0
     risk[user] = 0
@@ -108,23 +107,29 @@ def roll_dice(user):
         if sorted_rolls == (4, 5, 6):
             print("PoCo!")
             risk[user] += 4
+            print(f'Rolled {rolls}')
         elif sorted_rolls == (1, 2, 3):
             print("LoCo!")
             risk[user] += 2
+            print(f'Rolled {rolls}')
         else:
             print("Three-of-a-kind!")
             risk[user] += 3
+            print(f'Rolled {rolls}')
 
     else:
-        scores[user] += sum(points[die] for die in rolls)
+        score_sum = sum(points[die] for die in rolls)
+        scores[user] += score_sum
         risk[user] += 1
+        print(f'Rolled {rolls}')
+        print(f"Sum of rolled points: {score_sum}")
 
-    print(f'Rolled {rolls}')
 #===========#
 rolls_left = 0
 
 def three_tries(tries, user):
     rolls_remaining = tries
+    
     while rolls_remaining > 0: 
         roll_dice(user)
         rolls_remaining -= 1
@@ -134,27 +139,24 @@ def three_tries(tries, user):
             break
 
         print(f'attempts left: {rolls_remaining}')
+        
         if user == "user": # if user is human player
             retry = input('Would you like to try again?: (Yes/No) ').strip().lower()
 
             if retry == "yes":
                 print("Re-rolling...")
-                time.sleep(1)
-
+                time.sleep(1) #gives a slight pause in the game
             elif retry == "no":
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
-                # print("Ending Turn")
                 time.sleep(1)
                 
                 break
-
             else:
                 print("Invalid input. Please type 'yes' or 'no'.")
                 retry = input('Would you like to try again?: (Yes/No)').strip().lower()
         else: 
             if (scores[user]) >= 100:
                 print(f"State automatically saved after {tries - rolls_remaining} attempts")
-                # print("Ending Turn")
                 time.sleep(1)
                 
                 break
@@ -172,7 +174,6 @@ ran_player3 = {1:"Sorin", 2:"Thalia", 3:"Urza", 4:"Virgil", 5:"Walter", 6:"Xavie
 
 player = {0:"user", 1:"player1", 2:"player2", 3:"player3"}
 
-# unused function, renamed to init_players
 def init_players():
     players["player 1"]["name"] = random.choice(list(ran_player1.values()))
     players["player 2"]["name"] = random.choice(list(ran_player2.values()))
@@ -180,7 +181,6 @@ def init_players():
 
 
 #===========#
-# function to be used in the game function
 
 def report(rounds):
     round_text = (f"Round {rounds}")
@@ -201,7 +201,7 @@ def report(rounds):
 
 #===========#
 
-def winner(): #need to be looked over
+def winner():
     min_user = ''
     min_score = 99999
     for k, v in scores.items():
@@ -209,7 +209,6 @@ def winner(): #need to be looked over
         if v < min_score:
             min_score = v
             min_user = k  
-    print(f'\nUser with the LOWEST score is {players[min_user]["name"]} with score of {min_score}') #this will print out the lowest score player and its score
     
     loser = check_loser() #checks loser in case of a tie in lowest score
     
@@ -219,13 +218,11 @@ def winner(): #need to be looked over
         if v > max_score:
             max_score = v
             max_user = k
-    print(f'User with the HIGHEST score is {players[max_user]["name"]} with score of {max_score}\n')
     
     #make the highest risk override the rest of the players(but not loser) risk
     for player in scores.keys():
         if player != min_user and player != loser:
             risk[player] = risk[max_user]
-    # print(f'updated risk: {risk}') #checks if risk works can be deleted later
     
     # extracts the name of player and the int value of risk and sets it to temp_player and temp_risk
     total_risk = 0
@@ -234,19 +231,22 @@ def winner(): #need to be looked over
             total_risk += temp_risk
             players[temp_player]["num_chip"] -= temp_risk
             risk[temp_player] = 0
+            
         else: #temp_player == min_user or temp_player == loser:
             risk[temp_player] = 0
+            
     #distributes chips to lowest scoring player or loser determined by check_loser()        
     if loser is None:
         players[min_user]["num_chip"] += total_risk
+        
     else:
         players[loser]["num_chip"] += total_risk
     
     #prints the updated amount of chips
     print('Here is the updated number of chips per player:')
     for player_data in players.values():
-        print(f"{player_data['name']}, Chips: {player_data['num_chip']}")
-
+        print(f"{player_data['name']}, Chips: {player_data['num_chip']}\n")
+    time.sleep(1)
     
 def check_winner():
     #sets tied_players to the list of players with the number of chips <= 0
@@ -255,7 +255,9 @@ def check_winner():
     if len(tied_players) == 1:
         # Only one player with 0 or fewer chips, return them as the winner
         return tied_players[0]
+    
     elif len(tied_players) > 1:
+        #if there are multiple players that are tied, counts the tied players and prints them
         if len(tied_players) == 2:
             print(f"There is a tie between {players[tied_players[0]]['name']} and {players[tied_players[1]]['name']}")
         elif len(tied_players) == 3:
@@ -271,9 +273,9 @@ def check_winner():
             elif scores[player_id] == highest_score:
                 print("for both tied players the score is the same! initiating tiebreaker")
                 winner = rand_tiebreaker(tied_players)
-        print(f'because {players[winner]["name"]} has a higher score of {highest_score}, {players[winner]["name"]} wins the tiebreaker!')  
+        print(f'because {players[winner]["name"]} has the highest score, {players[winner]["name"]} wins the tiebreaker!')  
         return winner
-    return None  # No winner yet
+    return None  # returns if there are no winner yet
 
 def check_loser():
     # Find the lowest score among players
@@ -302,7 +304,7 @@ def chips():
     while True:
         try:
             chip_num = int(input("How many chips would you like to start? The default amount is 10. "))
-            #b/c we cannot play if the num of chips is 0 i added a feature to not let that happen -K
+            #b/c we cannot play if the num of chips is 0 i added a feature to not let that happen
             if (chip_num <= 0):
                 chip_num = 10
                 print(f"Sorry, because the number of chips selected was zero the number of chips will be {chip_num}.")
@@ -396,7 +398,7 @@ def rules():
         """)
         
         time.sleep(1)
-        #edit the rules for tie breaker
+        
         print("""       
         In case that there is a tie with the number of players who have no chips left,
         tiebreaker will occur, it would take the higher score among the tied players to
@@ -422,6 +424,7 @@ name = input("What is your name?: ")
 players["user"]["name"] = name
 print(f'Hello {name}, Let\'s play a game!')
 print(f'Hello! and welcome to...')
+time.sleep(2)
 print("""
 +------------+
 | PoCo LoCo! |
@@ -429,8 +432,9 @@ print("""
 """)
 print(f'Our players are...')
 init_players()
+time.sleep(1.5)
 
-print(f'{players["player 1"]['name']}, {players["player 2"]['name']}, {players["player 3"]['name']}, and {name}!')
+print(f'{players["player 1"]['name']}, {players["player 2"]['name']}, {players["player 3"]['name']}, and {name}!\n')
 print(f'Let\'s start the game!')
 rules()
 chips()
