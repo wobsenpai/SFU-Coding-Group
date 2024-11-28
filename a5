@@ -245,7 +245,7 @@ def winner():
     #prints the updated amount of chips
     print('Here is the updated number of chips per player:')
     for player_data in players.values():
-        print(f"{player_data['name']}, Chips: {player_data['num_chip']}\n")
+        print(f"{player_data['name']}, Chips: {player_data['num_chip']}")
     time.sleep(1)
     
 def check_winner():
@@ -259,9 +259,9 @@ def check_winner():
     elif len(tied_players) > 1:
         #if there are multiple players that are tied, counts the tied players and prints them
         if len(tied_players) == 2:
-            print(f"There is a tie between {players[tied_players[0]]['name']} and {players[tied_players[1]]['name']}")
+            print(f"\nThere is a tie between {players[tied_players[0]]['name']} and {players[tied_players[1]]['name']}")
         elif len(tied_players) == 3:
-            print(f"There is a tie between {players[tied_players[0]]['name']}, {players[tied_players[1]]['name']} and {players[tied_players[2]]['name']}")
+            print(f"\nThere is a tie between {players[tied_players[0]]['name']}, {players[tied_players[1]]['name']} and {players[tied_players[2]]['name']}")
         
         # Multiple players with 0 or fewer chips, compare their scores
         highest_score = 0  
@@ -273,7 +273,7 @@ def check_winner():
             elif scores[player_id] == highest_score:
                 print("for both tied players the score is the same! initiating tiebreaker")
                 winner = rand_tiebreaker(tied_players)
-        print(f'because {players[winner]["name"]} has the highest score, {players[winner]["name"]} wins the tiebreaker!')  
+        print(f'because {players[winner]["name"]} has the highest score, {players[winner]["name"]} wins the tiebreaker!\n')  
         return winner
     return None  # returns if there are no winner yet
 
@@ -460,6 +460,6 @@ while not temp_winner:
         input("Press enter to continue...")
     winner()
     temp_winner = check_winner()
-print(f"{players[temp_winner]['name']} has {players[temp_winner]['num_chip']} chips and wins the game! ")
+print(f"{players[temp_winner]['name']} has {players[temp_winner]['num_chip']} chips and wins the game!\n ")
 
 #===========#
